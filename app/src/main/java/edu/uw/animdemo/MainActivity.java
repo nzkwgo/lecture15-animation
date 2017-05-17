@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         float y = event.getY() - getSupportActionBar().getHeight(); //closer to center...
 
         int action = MotionEventCompat.getActionMasked(event);
+
         switch(action) {
             case (MotionEvent.ACTION_DOWN) : //put finger down
                 //Log.v(TAG, "finger down");
@@ -74,9 +75,22 @@ public class MainActivity extends AppCompatActivity {
             case (MotionEvent.ACTION_UP) : //lift finger up
             case (MotionEvent.ACTION_CANCEL) : //aborted gesture
             case (MotionEvent.ACTION_OUTSIDE) : //outside bounds
+            case (MotionEvent.ACTION_POINTER_DOWN) :
+                int pointerID = getPointerID(event);
+                view.addTouch(pointerID, event.getX(pointerID), event.getY(pointerID));
+                return true;
+            case (MotionEvent.ACTION_POINTER_UP) :
+                int pointerID2 = getPointerID(event);
+                view.removeTouch(pointerID2);
+                return true;
             default :
                 return super.onTouchEvent(event);
         }
+    }
+
+    private int getPointerID(MotionEvent event) {
+        int pointerIndex = MotionEventCompat.getActionIndex(event);
+        return MotionEventCompat.getPointerId(event, pointerIndex);
     }
 
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
